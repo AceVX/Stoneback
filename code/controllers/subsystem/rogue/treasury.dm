@@ -36,6 +36,7 @@ SUBSYSTEM_DEF(treasury)
 	var/tax_value = 0.11
 	var/queens_tax = 0.15
 	var/treasury_value = 0
+	var/embargoed = FALSE
 	var/list/bank_accounts = list()
 	var/list/stockpile_datums = list()
 	var/next_treasury_check = 0
@@ -44,7 +45,12 @@ SUBSYSTEM_DEF(treasury)
 
 /datum/controller/subsystem/treasury/Initialize()
 	//Randomizes the roundstart amount of money and the queens tax.
-	treasury_value = rand(800,1500)
+	if(aspect_chosen(/datum/round_aspect/fulltreasury))
+		treasury_value = 2500
+	else if(aspect_chosen(/datum/round_aspect/emptytreasury))
+		treasury_value = 100
+	else
+		treasury_value = rand(800,1500)
 	queens_tax = pick(0.09, 0.15, 0.21, 0.30)
 
 	//For the merchants import and export.
@@ -89,7 +95,10 @@ SUBSYSTEM_DEF(treasury)
 		give_money_treasury(amt_to_generate, "wealth horde")
 		for(var/mob/living/carbon/human/X in GLOB.human_list)
 			if(X.job == "King" || X.job == "Queen")
-				send_ooc_note("Income from wealth horde: +[amt_to_generate]", name = X.real_name)
+				if(embargoed)
+					send_ooc_note("EMBARGO! Income from wealth horde: +0", name = X.real_name)
+				else
+					send_ooc_note("Income from wealth horde: +[amt_to_generate]", name = X.real_name)
 				return
 
 /*
@@ -139,6 +148,8 @@ SUBSYSTEM_DEF(treasury)
 //increments the treasury directly (tax collection)
 /datum/controller/subsystem/treasury/proc/give_money_treasury(amt, source)
 	if(!amt)
+		return
+	if(embargoed)
 		return
 	treasury_value += amt
 	if(source)

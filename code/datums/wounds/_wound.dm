@@ -18,6 +18,7 @@ GLOBAL_LIST_INIT(primordial_wounds, init_primordial_wounds())
 
 	/// Overlay to use when this wound is applied to a carbon mob
 	var/mob_overlay = "w1"
+	var/mob_overlay_is_bloody = FALSE // If the overlay should disappear if it isn't bleeding/or there isn't enough blood.
 	/// Overlay to use when this wound is sewn, and is on a carbon mob
 	var/sewn_overlay = ""
 
@@ -125,12 +126,12 @@ GLOBAL_LIST_INIT(primordial_wounds, init_primordial_wounds())
 	else
 		final_message = replacetext(final_message, "%BODYPART", parse_zone(BODY_ZONE_CHEST))
 	if(critical)
-		final_message = "<span class='crit'><b>Critical hit!</b> [final_message]</span>"
+		final_message = "<span class='crit'>[final_message]</span>"
 	return final_message
 
 /// Sound that plays when this wound is applied to a mob
 /datum/wound/proc/get_sound_effect(mob/living/affected, obj/item/bodypart/affected_bodypart)
-	if(critical && prob(3))
+	if(critical && prob(10))
 		return 'sound/combat/tf2crit.ogg'
 	return pick(sound_effect)
 
@@ -145,6 +146,11 @@ GLOBAL_LIST_INIT(primordial_wounds, init_primordial_wounds())
 			return FALSE
 	return TRUE
 
+/datum/wound/proc/do_blood_effect()
+	var/splatter_dir = turn(owner.dir, 180)
+	var/turf/target_loca = get_turf(owner)
+	new /obj/effect/temp_visual/dir_setting/bloodsplatter(target_loca, splatter_dir)
+
 /// Returns whether or not this wound can be applied while this other wound is present
 /datum/wound/proc/can_stack_with(datum/wound/other)
 	return TRUE
@@ -158,17 +164,19 @@ GLOBAL_LIST_INIT(primordial_wounds, init_primordial_wounds())
 	else if(owner)
 		remove_from_mob()
 	LAZYADD(affected.wounds, src)
-	sortTim(affected.wounds, GLOBAL_PROC_REF(cmp_wound_severity_dsc))
+	sortList(affected.wounds, GLOBAL_PROC_REF(cmp_wound_severity_dsc))
 	bodypart_owner = affected
 	owner = bodypart_owner.owner
 	on_bodypart_gain(affected)
-	INVOKE_ASYNC(src, PROC_REF(on_mob_gain), affected.owner) //this is literally a fucking lint error like new species cannot possible spawn with wounds until after its ass
+	on_mob_gain(affected.owner)
 	if(crit_message)
 		var/message = get_crit_message(affected.owner, affected)
 		if(message)
 			affected.owner.next_attack_msg += " [message]"
 	if(!silent)
 		var/sounding = get_sound_effect(affected.owner, affected)
+		if(bleed_rate)
+			do_blood_effect()
 		if(sounding)
 			playsound(affected.owner, sounding, 100, vary = FALSE)
 	return TRUE
@@ -287,7 +295,7 @@ GLOBAL_LIST_INIT(primordial_wounds, init_primordial_wounds())
 		return FALSE
 	var/old_overlay = mob_overlay
 	mob_overlay = sewn_overlay
-	bleed_rate = sewn_bleed_rate
+	bleed_rate = 0
 	clotting_rate = sewn_clotting_rate
 	clotting_threshold = sewn_clotting_threshold
 	woundpain = sewn_woundpain

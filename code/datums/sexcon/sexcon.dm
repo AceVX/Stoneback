@@ -377,6 +377,9 @@ Admin logging is provided for orgasms and if you try to initiate sex with corpse
 	current_action = null
 
 /datum/sex_controller/proc/try_start_action(action_type)
+	if(is_spent())
+		to_chat(src, span_notice("not now..."))
+		return FALSE
 	if(action_type == current_action)
 		try_stop_current_action()
 		return
@@ -477,11 +480,11 @@ Admin logging is provided for orgasms and if you try to initiate sex with corpse
 /datum/sex_controller/proc/get_speed_multiplier()
 	switch(speed)
 		if(SEX_SPEED_LOW)
-			return 1.0
+			return 6.0
 		if(SEX_SPEED_MID)
-			return 1.5
+			return 8.0
 		if(SEX_SPEED_HIGH)
-			return 2.0
+			return 10.0
 
 /datum/sex_controller/proc/get_stamina_cost_multiplier()
 	switch(force)

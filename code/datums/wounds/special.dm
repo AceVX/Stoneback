@@ -23,7 +23,7 @@
 	)
 	woundpain = 50
 	bleed_rate = 8
-	can_cauterize = TRUE
+	can_cauterize = FALSE
 	critical = TRUE
 
 /datum/wound/facial/ears/can_apply_to_mob(mob/living/affected)
@@ -49,7 +49,7 @@
 		"The eye is destroyed!",
 	)
 	woundpain = 30
-	bleed_rate = 8
+	can_sew = FALSE
 	can_cauterize = FALSE
 	critical = TRUE
 
@@ -96,8 +96,6 @@
 /datum/wound/facial/eyes/right/permanent
 	whp = null
 	woundpain = 0
-	bleed_rate = 0
-	can_sew = FALSE
 
 /datum/wound/facial/eyes/left
 	name = "left eye evisceration"
@@ -131,8 +129,6 @@
 /datum/wound/facial/eyes/left/permanent
 	whp = null
 	woundpain = 0
-	bleed_rate = 0
-	can_sew = FALSE
 
 /datum/wound/facial/tongue
 	name = "glossectomy"
@@ -142,8 +138,7 @@
 		"The tongue is severed!",
 		"The tongue flies off in an arc!"
 	)
-	woundpain = 8
-	bleed_rate = 10
+	can_sew = FALSE
 	can_cauterize = FALSE
 	critical = TRUE
 
@@ -180,7 +175,7 @@
 /datum/wound/facial/disfigurement/on_mob_loss(mob/living/affected)
 	. = ..()
 	REMOVE_TRAIT(affected, TRAIT_DISFIGURED, "[type]")
-	
+
 /datum/wound/facial/disfigurement/nose
 	name = "rhinotomy"
 	check_name = "<span class='warning'>NOSE</span>"
@@ -192,8 +187,6 @@
 /datum/wound/facial/disfigurement/nose/on_mob_gain(mob/living/affected)
 	. = ..()
 	ADD_TRAIT(affected, TRAIT_MISSING_NOSE, "[type]")
-	if(HAS_TRAIT(affected, TRAIT_CRITICAL_WEAKNESS))
-		affected.death()
 
 /datum/wound/facial/disfigurement/nose/on_mob_loss(mob/living/affected)
 	. = ..()
@@ -280,9 +273,9 @@
 	check_name = "<span class='userdanger'><B>SCARRED</B></span>"
 	severity = WOUND_SEVERITY_SEVERE
 	crit_message = list(
-		"The whiplash cuts deep!", 
-		"The tissue is irreversibly rended!", 
-		"The %BODYPART is thoroughly disfigured!", 
+		"The whiplash cuts deep!",
+		"The tissue is irreversibly rended!",
+		"The %BODYPART is thoroughly disfigured!",
 	)
 	sound_effect = 'sound/combat/crit.ogg'
 	whp = 80

@@ -209,6 +209,10 @@
 			options += "Enable Paying Taxes"
 		else
 			options += "Stop Paying Taxes"
+		if(SStreasury.embargoed)
+			options += "Lift Embargo"
+		else
+			options += "Declare Embargo"
 		var/select = input(usr, "Please select an option.", "", null) as null|anything in options
 		if(!select)
 			return
@@ -221,6 +225,14 @@
 			if("Stop Paying Taxes")
 				upgrade_flags |= UPGRADE_NOTAX
 				playsound(loc, 'sound/misc/beep.ogg', 100, FALSE, -1)
+			if("Declare Embargo")
+				SStreasury.embargoed = TRUE
+				playsound(loc, 'sound/misc/beep.ogg', 100, FALSE, -1)
+				priority_announce("The Guild of Merchants has declared an EMBARGO! The treasury gains nothing.", title = "EMBARGO!", sound = 'sound/misc/excomm.ogg')
+			if("Lift Embargo")
+				SStreasury.embargoed = FALSE
+				playsound(loc, 'sound/misc/beep.ogg', 100, FALSE, -1)
+				priority_announce("The Guild of Merchants has lifted the EMBARGO. Trade flows freely once more.", title = "EMBARGO LIFTED", sound = 'sound/misc/excomm.ogg')
 	return attack_hand(usr)
 
 /obj/structure/roguemachine/merchantvend/attack_hand(mob/living/user)

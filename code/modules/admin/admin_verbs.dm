@@ -35,6 +35,7 @@ GLOBAL_PROTECT(admin_verbs_admin)
 	return list(
 	/client/proc/adjusttriumph,
 	/client/proc/end_party,		/*destroys our own admin datum so we can play as a regular player*/
+	/client/proc/forceaspect,
 	/client/proc/cmd_admin_say,			/*admin-only ooc chat*/
 	/client/proc/hide_verbs,			/*hides all our adminverbs*/
 	/client/proc/hide_most_verbs,		/*hides all our hideable adminverbs*/
@@ -56,6 +57,7 @@ GLOBAL_PROTECT(admin_verbs_admin)
 //	/datum/admins/proc/show_player_panel,	/*shows an interface for individual players, with various links (links require additional flags*/
 //	/datum/verbs/menu/Admin/verb/playerpanel,
 	/client/proc/game_panel,			/*game panel, allows to change game-mode etc*/
+	/datum/admins/proc/toggle_job_scaling,	/*toggles population-based Adventurer/Pilgrim slot scaling*/
 	/datum/admins/proc/toggleooc,		/*toggles ooc on/off for everyone*/
 	/datum/admins/proc/toggleoocdead,	/*toggles ooc on/off for everyone who is dead*/
 	/datum/admins/proc/toggleenter,		/*toggles whether people can join the current game*/
@@ -766,6 +768,22 @@ GLOBAL_PROTECT(admin_verbs_hideable)
 
 	log_admin("[key_name(usr)] has [AI_Interact ? "activated" : "deactivated"] Admin AI Interact")
 	message_admins("[key_name_admin(usr)] has [AI_Interact ? "activated" : "deactivated"] their AI interaction")
+
+/client/proc/forceaspect()
+	set category = "GameMaster"
+	set name = "Force Aspect"
+	if(!holder)
+		return
+
+	var/list/possibilities = list()
+	for(var/thing in subtypesof(/datum/round_aspect))//Populate possible aspects list.
+		var/datum/round_aspect/A = thing
+		possibilities += A
+	var/chosen = input(usr, "Choose", "STONEMONGERS") as null|anything in possibilities
+	if(chosen)
+		SSticker.round_aspect = new chosen
+		SSticker.forcing_aspect = TRUE
+		SSticker.round_aspect.apply()
 
 /client/proc/end_party()
 	set category = "GameMaster"

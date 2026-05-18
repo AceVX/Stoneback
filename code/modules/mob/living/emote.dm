@@ -285,17 +285,18 @@
 	message = "gasps for air!"
 	emote_type = EMOTE_AUDIBLE
 
-/datum/emote/living/bow
-	key = "bow"
-	key_third_person = "bows"
-	message = "bows."
-	message_param = "bows to %t."
-	restraint_check = TRUE
-	emote_type = EMOTE_VISIBLE
-/mob/living/carbon/human/verb/emote_bow()
-	set name = "Bow"
-	set category = "Emotes"
-	emote("bow", intentional = TRUE)
+// WIP hotkey emotes
+// /datum/emote/living/bow
+// 	key = "bow"
+// 	key_third_person = "bows"
+// 	message = "bows."
+// 	message_param = "bows to %t."
+// 	restraint_check = TRUE
+// 	emote_type = EMOTE_VISIBLE
+// /mob/living/carbon/human/verb/emote_bow()
+// 	set name = "Bow"
+// 	set category = "Emotes"
+// 	emote("bow", intentional = TRUE)
 
 /datum/emote/living/burp
 	key = "burp"

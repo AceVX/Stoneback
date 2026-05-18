@@ -2,8 +2,7 @@
 /obj/item/gun/ballistic/revolver/grenadelauncher/crossbow
 	name = "crossbow"
 	desc = "A mechanical ranged weapon of simple design, affixed with a stirrup and fired via trigger."
-	icon = 'icons/roguetown/weapons/bows.dmi'
-//	icon = 'icons/roguetown/weapons/32.dmi'
+	icon = 'icons/roguetown/weapons/32.dmi'
 	icon_state = "crossbow0"
 	item_state = "crossbow"
 	possible_item_intents = list(/datum/intent/shoot/crossbow, /datum/intent/arc/crossbow, INTENT_GENERIC)
@@ -69,7 +68,7 @@
 		var/newtime = chargetime
 		//skill block
 		newtime = newtime + 18
-		newtime = newtime - (mastermob.mind.get_skill_level(/datum/skill/combat/firearms) * 3.5)
+		newtime = newtime - (mastermob.mind.get_skill_level(/datum/skill/combat/firearms) * 4)
 		//per block
 		newtime = newtime + 20
 		// Perception aint gonna help you with loading a musket, bud
@@ -141,7 +140,6 @@
 		else
 			to_chat(user, "<span class='warning'>I need to cock the crossbow first.</span>")
 
-
 /obj/item/gun/ballistic/revolver/grenadelauncher/crossbow/process_fire(atom/target, mob/living/user, message = TRUE, params = null, zone_override = "", bonus_spread = 0)
 	if(user.client)
 		if(user.client.chargedprog >= 100)
@@ -160,7 +158,6 @@
 			BB.bonus_accuracy += (user.STAPER - 8) //Also, increases bonus accuracy by 1, which cannot fall off due to distance.
 			if(user.STAPER > 10)
 				BB.damage = BB.damage * (user.STAPER / 10)
-		BB.damage *= damfactor // Apply damfactor multiplier regardless of PER.
 		BB.bonus_accuracy += (user.mind.get_skill_level(/datum/skill/combat/crossbows) * 3) //+3 accuracy per level in crossbows
 	cocked = FALSE
 	..()

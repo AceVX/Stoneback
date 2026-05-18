@@ -271,6 +271,8 @@
 	var/obj/item/organ/lungs = getorganslot(ORGAN_SLOT_LUNGS)
 	if(reagents.has_reagent(/datum/reagent/toxin/lexorin, needs_metabolizing = TRUE))
 		return
+	if(has_wound(/datum/wound/artery/neck))
+		return
 
 	var/datum/gas_mixture/environment
 	if(loc)

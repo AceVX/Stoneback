@@ -23,7 +23,7 @@
 /obj/item/bodypart/proc/dismember(dam_type = BRUTE, bclass = BCLASS_CUT, mob/living/user, zone_precise = src.body_zone)
 	if(!owner)
 		return FALSE
-	var/mob/living/carbon/C = owner
+	var/mob/living/carbon/human/C = owner
 	if(!dismemberable)
 		if(zone_precise != BODY_ZONE_PRECISE_NECK)
 			return FALSE
@@ -31,16 +31,12 @@
 		return FALSE
 	if(HAS_TRAIT(C, TRAIT_NODISMEMBER))
 		return FALSE
-	if(ishuman(owner))
-		var/mob/living/carbon/human/human_owner = owner
-		if(human_owner.checkcritarmor(zone_precise, bclass))
-			return FALSE
 
 	var/obj/item/bodypart/affecting = C.get_bodypart(BODY_ZONE_CHEST)
 	if(affecting && dismember_wound)
 		affecting.add_wound(dismember_wound)
 	playsound(C, pick(dismemsound), 50, FALSE, -1)
-	if(body_zone == BODY_ZONE_HEAD)
+	if(istype(src, /obj/item/bodypart/head) && user.zone_selected == BODY_ZONE_PRECISE_NECK)
 		C.visible_message("<span class='danger'><B>[C] is [pick("BRUTALLY","VIOLENTLY","BLOODILY","MESSILY")] DECAPITATED!</B></span>")
 	else
 		C.visible_message("<span class='danger'><B>The [src.name] is [pick("torn off", "sundered", "severed", "seperated", "unsewn")]!</B></span>")
@@ -55,7 +51,7 @@
 				if(C.real_name in GLOB.excommunicated_players)
 					stress2give = /datum/stressevent/viewsinpunish
 	if(stress2give)
-		for(var/mob/living/carbon/CA in hearers(world.view, C))
+		for(var/mob/living/carbon/human/CA in hearers(world.view, C))
 			if(CA != C && !HAS_TRAIT(CA, TRAIT_BLIND))
 				if(stress2give == /datum/stressevent/viewdismember)
 					if(HAS_TRAIT(CA, TRAIT_STEELHEARTED))
@@ -90,6 +86,7 @@
 		target_turf = new_turf
 		if(new_turf.density)
 			break
+	update_transform()
 	throw_at(target_turf, throw_range, throw_speed)
 	return TRUE
 
@@ -404,6 +401,7 @@
 	//Transfer some head appearance vars over
 	if(brain)
 		if(brainmob)
+//			brainmob.container = null //Reset brainmob head var. Do we need this? we have no brain transplants.
 			brainmob.forceMove(brain) //Throw mob into brain.
 			brain.brainmob = brainmob //Set the brain to use the brainmob
 			brainmob = null //Set head brainmob var to null

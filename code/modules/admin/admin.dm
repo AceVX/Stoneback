@@ -319,7 +319,9 @@
 	if(marked_datum && istype(marked_datum, /atom))
 		dat += "<A href='?src=[REF(src)];[HrefToken()];dupe_marked_datum=1'>Duplicate Marked Datum</A><br>"
 
-	usr << browse(dat, "window=admin2;size=240x280")
+	var/datum/browser/popup = new(usr, "gamepanel", "Game Panel", 420, 420)
+	popup.set_content(dat)
+	popup.open()
 	return
 
 /////////////////////////////////////////////////////////////////////////////////////////////////admins2.dm merge
@@ -498,6 +500,16 @@
 	log_admin("[key_name(usr)] toggled AI allowed.")
 	world.update_status()
 	SSblackbox.record_feedback("nested tally", "admin_toggle", 1, list("Toggle AI", "[!alai ? "Disabled" : "Enabled"]")) //If you are copy-pasting this, ensure the 2nd parameter is unique to the new proc!
+
+/datum/admins/proc/toggle_job_scaling()
+	set category = "Server"
+	set name = "Toggle Job Scaling"
+	set desc = "Enable or disable population-based Adventurer/Pilgrim slot scaling"
+
+	SSjob.scaling_enabled = !SSjob.scaling_enabled
+	var/state = SSjob.scaling_enabled ? "ENABLED" : "DISABLED"
+	log_admin("[key_name(usr)] toggled job scaling: [state]")
+	message_admins("<span class='adminnotice'>[key_name_admin(usr)] toggled population-based job scaling: [state].</span>")
 
 /datum/admins/proc/toggleaban()
 	set category = "Server"

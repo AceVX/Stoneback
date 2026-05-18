@@ -241,6 +241,7 @@
 	var/atkswinging = 0
 
 	//target goes here
+	var/mob/hovered_mob = null // mob we're currently hovering
 	var/mob/targetting = null
 	var/temptarget = FALSE
 	var/fixedeye = FALSE

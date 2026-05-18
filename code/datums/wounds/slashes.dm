@@ -2,7 +2,7 @@
 	name = "slash"
 	whp = 30
 	sewn_whp = 10
-	bleed_rate = 0.8
+	bleed_rate = 0.4
 	sewn_bleed_rate = 0.02
 	clotting_rate = 0.02
 	sewn_clotting_rate = 0.02
@@ -19,21 +19,19 @@
 	name = "small slash"
 	whp = 15
 	sewn_whp = 5
-	bleed_rate = 0.4
+	bleed_rate = 0.2
 	sewn_bleed_rate = 0.01
 	clotting_rate = 0.02
 	sewn_clotting_rate = 0.02
 	clotting_threshold = 0.1
 	sewn_clotting_threshold = 0.05
-	woundpain = 4
-	sewn_woundpain = 1
 	sew_threshold = 25
 
 /datum/wound/slash/large
 	name = "gruesome slash"
 	whp = 40
 	sewn_whp = 12
-	bleed_rate = 2
+	bleed_rate = 1
 	sewn_bleed_rate = 0.05
 	clotting_rate = 0.02
 	sewn_clotting_rate = 0.02
@@ -51,21 +49,20 @@
 	sound_effect = 'sound/combat/crit2.ogg'
 	whp = 100
 	sewn_whp = 35
-	bleed_rate = 30
+	bleed_rate = 20
 	sewn_bleed_rate = 0.8
 	clotting_rate = 0.02
 	sewn_clotting_rate = 0.02
 	clotting_threshold = 10
 	sewn_clotting_threshold = 0.5
-	woundpain = 25
-	sewn_woundpain = 10
 	sew_threshold = 150 //absolutely awful to sew up
+	mob_overlay = "disembowel"
 	critical = TRUE
 	/// Organs we can disembowel associated with chance to disembowel
 	var/static/list/affected_organs = list(
-		ORGAN_SLOT_STOMACH = 100,
+		ORGAN_SLOT_STOMACH = 50,
 		ORGAN_SLOT_LIVER = 50,
-		ORGAN_SLOT_STOMACH_AID = 100 // It's called GUTTED for a reason.
+		ORGAN_SLOT_STOMACH_AID = 100
 	)
 
 /datum/wound/lashing
@@ -96,8 +93,8 @@
 	sewn_clotting_threshold = 0.1
 	woundpain = 8
 	sewn_woundpain = 4
-	sew_threshold = 30	
-	
+	sew_threshold = 30
+
 /datum/wound/lashing/large
 	name = "excruciating lashing"
 	whp = 80
@@ -134,14 +131,13 @@
 			continue
 		if(!(organ.slot in affected_organs))
 			continue
-		/*
 		var/spill_prob = affected_organs[organ.slot]
 		if(prob(spill_prob))
-		*/
-		spilled_organs += organ
+			spilled_organs += organ
 	for(var/obj/item/organ/spilled as anything in spilled_organs)
 		spilled.Remove(owner)
 		spilled.forceMove(drop_location)
+		affected.add_embedded_object(spilled, TRUE)
 	if(istype(affected, /obj/item/bodypart/chest))
 		var/obj/item/bodypart/chest/cavity = affected
 		if(cavity.cavity_item)
@@ -154,7 +150,7 @@
 	severity = WOUND_SEVERITY_SUPERFICIAL
 	whp = 40
 	sewn_whp = 12
-	bleed_rate = 2
+	bleed_rate = 1
 	sewn_bleed_rate = 0.05
 	clotting_rate = null
 	clotting_threshold = null

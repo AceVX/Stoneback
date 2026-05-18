@@ -10,7 +10,7 @@
 	)
 	sound_effect = "wetbreak"
 	whp = 40
-	woundpain = 60
+	woundpain = 100
 	mob_overlay = "frac"
 	can_sew = FALSE
 	can_cauterize = FALSE
@@ -58,10 +58,10 @@
 		"The skull caves in!",
 	)
 	sound_effect = "headcrush"
-	whp = 80
+	whp = 150
 	sleep_healing = 0
 	/// Most head fractures are serious enough to cause paralysis
-	var/paralysis = FALSE
+	var/paralysis = TRUE
 	/// Some head fractures are so serious they cause instant death
 	var/mortal = FALSE
 	/// Funny easter egg
@@ -85,7 +85,7 @@
 		if(iscarbon(affected))
 			var/mob/living/carbon/carbon_affected = affected
 			carbon_affected.update_disabled_bodyparts()
-	if(mortal && HAS_TRAIT(affected, TRAIT_CRITICAL_WEAKNESS))
+	if(mortal || HAS_TRAIT(affected, TRAIT_CRITICAL_WEAKNESS))
 		affected.death()
 
 /datum/wound/fracture/head/on_mob_loss(mob/living/affected)
@@ -112,7 +112,7 @@
 		"The cranium is cracked!",
 		"The cranium is torn!",
 	)
-	whp = 150
+	embed_chance = 100
 	paralysis = TRUE
 	mortal = TRUE
 	dents_brain = TRUE
@@ -124,8 +124,10 @@
 /datum/wound/fracture/head/eyes
 	name = "orbital fracture"
 	crit_message = list(
-		"The orbital bone is fractured!",
-		"The orbital bone is cracked!",
+		"The orbital bone is punctured!",
+		"The orbital bone is pierced!",
+		"The eye socket is punctured!",
+		"The eye socket is pierced!",
 	)
 	paralysis = FALSE
 	mortal = TRUE
@@ -134,8 +136,10 @@
 /datum/wound/fracture/head/ears
 	name = "temporal fracture"
 	crit_message = list(
-		"The temporal bone is fractured!",
-		"The temporal bone is cracked!",
+		"The orbital bone is punctured!",
+		"The temporal bone is pierced!",
+		"The ear canal is punctured!",
+		"The ear canal is pierced!",
 	)
 	paralysis = FALSE
 	mortal = TRUE
@@ -144,9 +148,10 @@
 /datum/wound/fracture/head/nose
 	name = "nasal fracture"
 	crit_message = list(
-		"The nasal bone is fractured!",
-		"The nasal bone is shattered!",
+		"The nasal bone is punctured!",
+		"The nasal bone is pierced!",
 	)
+	embed_chance = 100
 	paralysis = FALSE
 	mortal = FALSE
 	dents_brain = FALSE
@@ -160,7 +165,7 @@
 		"The jaw is shattered!",
 		"The jaw caves in!",
 	)
-	whp = 50
+	whp = 80
 	sleep_healing = 0
 
 /datum/wound/fracture/mouth/on_mob_gain(mob/living/affected)
@@ -182,7 +187,7 @@
 		"The spine cracks!",
 		"The spine is broken!",
 	)
-	whp = 150
+	whp = 100
 	sleep_healing = 0
 
 /datum/wound/fracture/neck/on_mob_gain(mob/living/affected)

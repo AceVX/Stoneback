@@ -10,7 +10,7 @@
 	sewn_bleed_rate = 0.2
 	clotting_threshold = null
 	sewn_clotting_threshold = null
-	woundpain = 35
+	woundpain = 50
 	sewn_woundpain = 20
 	mob_overlay = "s1"
 	sewn_overlay = "cut"
@@ -18,7 +18,7 @@
 	can_cauterize = TRUE
 	critical = TRUE
 	sleep_healing = 0
-	embed_chance = 0
+	embed_chance = 75
 
 	werewolf_infection_probability = 100
 
@@ -44,15 +44,32 @@
 	crit_message = "Blood sprays from %VICTIM's throat!"
 	whp = 100
 	sewn_whp = 25
-	bleed_rate = 40
+	bleed_rate = 60
 	sewn_bleed_rate = 0.5
-	woundpain = 45
-	sewn_woundpain = 20
+	woundpain = 60
+	sewn_woundpain = 30
 	mob_overlay = "s1_throat"
+	mob_overlay_is_bloody = TRUE
 
 /datum/wound/artery/neck/on_mob_gain(mob/living/affected)
 	. = ..()
 	ADD_TRAIT(affected, TRAIT_GARGLE_SPEECH, "[type]")
+	if(HAS_TRAIT(affected, TRAIT_CRITICAL_WEAKNESS))
+		affected.death()
+
+/datum/wound/artery/neck/on_life()
+	. = ..()
+	if(!iscarbon(owner))
+		return
+	var/mob/living/carbon/carbon_owner = owner
+	if(!carbon_owner.stat && prob(10))
+		carbon_owner.Jitter(10)
+		carbon_owner.losebreath += 5
+		carbon_owner.adjustOxyLoss(rand(1,10))
+		if(prob(50))
+			carbon_owner.emote(pick("gasp","choke","breathgasp"))
+		else
+			carbon_owner.emote("deathgurgle")
 
 /datum/wound/artery/neck/on_mob_loss(mob/living/affected)
 	. = ..()
@@ -64,9 +81,9 @@
 	severity = WOUND_SEVERITY_FATAL
 	whp = 100
 	sewn_whp = 35
-	bleed_rate = 40
+	bleed_rate = 50
 	sewn_bleed_rate = 0.8
-	woundpain = 80
+	woundpain = 100
 	sewn_woundpain = 50
 
 /datum/wound/artery/chest/on_mob_gain(mob/living/affected)
@@ -102,7 +119,7 @@
 	severity = WOUND_SEVERITY_FATAL
 	whp = 100
 	sewn_whp = 25
-	bleed_rate = 30
+	bleed_rate = 50
 	sewn_bleed_rate = 0.5
 	woundpain = 60
 	sewn_woundpain = 30

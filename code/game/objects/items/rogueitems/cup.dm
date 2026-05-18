@@ -21,7 +21,7 @@
 	gripped_intents = list(INTENT_POUR)
 
 /obj/item/reagent_containers/glass/cup/update_icon(dont_fill=FALSE)
-	testing("cupupdate")
+//	testing("cupupdate") // testing spam
 
 	cut_overlays()
 

@@ -166,6 +166,7 @@ GLOBAL_VAR_INIT(rpg_loot_items, FALSE)
 	var/gripsprite = FALSE //use alternate grip sprite for inhand
 
 	var/dropshrink = 0
+	var/droprot = FALSE // random orientation on drop
 
 	var/wlength = WLENGTH_NORMAL		//each weapon length class has its own inherent dodge properties
 	var/wbalance = 0
@@ -254,11 +255,13 @@ GLOBAL_LIST_INIT(IconStates_cache, list())
 
 /obj/item/proc/update_transform()
 	transform = null
-	if(dropshrink)
-		if(isturf(loc))
-			var/matrix/M = matrix()
+	if(isturf(loc))
+		var/matrix/M = matrix()
+		if(dropshrink)
 			M.Scale(dropshrink,dropshrink)
-			transform = M
+		if(droprot)
+			M.Turn(rand(50,350))
+		transform = M
 	if(ismob(loc))
 		if(altgripped)
 			if(gripsprite)

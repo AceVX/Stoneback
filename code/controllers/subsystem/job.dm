@@ -1,7 +1,16 @@
 SUBSYSTEM_DEF(job)
 	name = "Jobs"
 	init_order = INIT_ORDER_JOBS
-	flags = SS_NO_FIRE
+	wait = 10 MINUTES
+	runlevels = RUNLEVEL_GAME
+
+    ///TODO: sync scaling with migrant waves firing
+	/// When FALSE, scale_population_jobs() does nothing and slot counts are not updated
+	var/scaling_enabled = TRUE
+	/// Adventurer slots = floor(connected_clients * this / 100)
+	var/adventurer_slot_pct = 25
+	/// Pilgrim slots = floor(connected_clients * this / 100)
+	var/pilgrim_slot_pct = 25
 
 	var/list/occupations = list()		//List of all jobs
 	var/list/datum/job/name_occupations = list()	//Dict of all jobs, keys are titles
@@ -24,6 +33,29 @@ SUBSYSTEM_DEF(job)
 	generate_selectable_species()
 	set_overflow_role(CONFIG_GET(string/overflow_job))
 	return ..()
+
+/datum/controller/subsystem/job/fire()
+	scale_population_jobs()
+
+/datum/controller/subsystem/job/proc/scale_population_jobs()
+	if(!scaling_enabled)
+		return
+	var/connected = length(GLOB.clients)
+	to_chat(GLOB.admins, "<span class='adminnotice'>Job scaling fired: [connected] connected players.</span>")
+	scale_one_population_job(GetJobType(/datum/job/roguetown/adventurer), floor(connected * adventurer_slot_pct / 100))
+	scale_one_population_job(GetJobType(/datum/job/roguetown/pilgrim), floor(connected * pilgrim_slot_pct / 100))
+
+/datum/controller/subsystem/job/proc/scale_one_population_job(datum/job/job, new_slots)
+	if(!job)
+		return
+	var/old_slots = job.total_positions
+	if(old_slots == new_slots)
+		return
+	job.total_positions = new_slots
+	job.spawn_positions = new_slots
+	var/delta = new_slots - old_slots
+	var/delta_str = delta > 0 ? "+[delta]" : "[delta]"
+	to_chat(GLOB.admins, "<span class='adminnotice'>Job scaling: [job.title] slots changed from [old_slots] to [new_slots] ([delta_str]) based on [length(GLOB.clients)] connected players.</span>")
 
 /datum/controller/subsystem/job/proc/set_overflow_role(new_overflow_role)
 	var/datum/job/new_overflow = GetJob(new_overflow_role)

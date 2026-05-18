@@ -120,6 +120,26 @@
 	message_param = "salutes to %t."
 	restraint_check = TRUE
 
+/datum/emote/living/carbon/human/bow
+	key = "bow"
+	key_third_person = "bows"
+	message = "bows."
+	message_param = "bows to %t."
+	restraint_check = TRUE
+
+/mob/living/carbon/human/verb/emote_bow()
+	set name = "BOW"
+	set category = "Emotes"
+	var/mob/target = hovered_mob
+	if(target && !QDELETED(target) && get_dist(src, target) <= 3)
+		emote("bow", message = target.name, intentional = TRUE)
+	else
+		emote("bow", intentional = TRUE)
+
+/mob/living/carbon/human/verb/emote_bow_f4()
+	set name = ".bow"
+	emote_bow()
+
 /datum/emote/living/carbon/human/shrug
 	key = "shrug"
 	key_third_person = "shrugs"
